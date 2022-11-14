@@ -1,68 +1,66 @@
-import React, {components, useState, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import MapView, {Marker}  from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
-import  GOOGLE_MAP_KEY  from '../constants/googleMapKey';
+import { StyleSheet, View, SafeAreaView, Image } from 'react-native'
+import React from 'react'
+import tw from 'twrnc';
+import NavOptions from '../../components/NavOptions';
+import GOOGLE_MAP_KEY from '../constants/googleMapKey';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { setOrigin, setDestination } from '../../slices/navSlice';
+import { useDispatch } from 'react-redux';
 
-export default function Home () {
-  const [state, setState] = useState({
-    pickupCords: {
-      latitude: 21.030653,
-      longitude: 105.847130,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    },
-    destinationCords: {
-      latitude: 20.865139,
-      longitude: 106.683830,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    }
-  })
-
-  const mapRef = useRef()
-
-  const {pickupCords, destinationCords } = state
-
+const Home = () => {
+  const dispatch = useDispatch();
   return (
-    <View style={styles.container}>
-    <MapView
-      ref={mapRef}
-      style={StyleSheet.absoluteFill}
-      initialRegion={pickupCords}
-  >
-    <Marker
-      coordinate={pickupCords}
-      />
-      <Marker
-      coordinate={destinationCords}
-      />
-    <MapViewDirections
-      origin={pickupCords}
-      destination={destinationCords}
-      apikey={GOOGLE_MAP_KEY}
-      strokeWidth={3}
-      strokeColor="blue"
-      optimizeWaypoints={true}
-      onReady={result =>{
-        mapRef.current.fitToCoordinates(result.coordinates,{
-          edgePadding:{
-            right: 30,
-            bottom: 300,
-            left: 30,
-            top: 100
-          }
-        })
-      }}
-    />
-      </MapView>
-    </View>
-  );
+    <SafeAreaView style={tw`bg-white h-full`}>
+      <View style={tw`p-5`}>
+        <Image
+          style={{
+            width: 100, 
+            height: 100, 
+            resizeMode: "contain",
+          }}
+          source={{
+            uri: "https://links.papareact.com/gzs",
+          }}
+        />
+
+        <GooglePlacesAutocomplete
+          placeholder="Where From ?"
+          styles={{
+            container: {
+              flex: 0,
+            },
+            textInput: {
+                fontSize: 18,
+            },
+          }}
+          onPress={(data, details = null) => {
+          dispatch(setOrigin({
+              location: details.geometry.location,
+              description: data.description
+            }))
+          dispatch(setDestination(null))
+          }}
+          fetchDetails={true}
+          enablePoweredByContainer={false}
+          minLength={2}
+          query={{
+            key: GOOGLE_MAP_KEY,
+            language: 'en',
+          }}
+          nearbyPlacesAPI="GooglePlacesSearch"
+          debounce={400}
+        />
+
+      <NavOptions/>
+      </View>
+    </SafeAreaView>
+  )
 }
 
+export default Home
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
+
+
+
+})
