@@ -6,8 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { selectOrigin } from '../slices/navSlice';
 
-//
-//
+
+
 
 const data = [
     {
@@ -15,12 +15,17 @@ const data = [
         title:"Get a ride",
         screen: "MapScreen",
         image: "https://links.papareact.com/3pn",
+    },
+    {
+        id:"234",
+        title:"WIP",
+        screen:"null",
     }
 ];
 
 const NavOptions = () => {
     const navigation = useNavigation();
-   const origin = useSelector(selectOrigin);
+    const origin = useSelector(selectOrigin);
   return (
     <FlatList
     data={data}
